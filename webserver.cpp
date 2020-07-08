@@ -250,6 +250,125 @@ void tinfoJSONTable(AsyncWebServerRequest *request)
 }
 
 /* ======================================================================
+Function: sensorsJSONTable
+Purpose : dump all sensors  values in JSON table format for browser
+Input   : linked list pointer on the concerned data
+          true to dump all values, false for only modified ones
+Output  : -
+Comments: -
+====================================================================== */
+void sensorsJSONTable(AsyncWebServerRequest *request)
+{
+	
+	  // Just to debug where we are
+  DebugF("Serving /sensor page...\r\n");
+
+  #ifdef MOD_SENSORS
+    sensors_read();
+	
+	char buffer[32];
+
+	String response = "";
+	   // Json start
+    response += F("[\r\n");
+
+	response += F("{\"mesure\":\"Température\",\"valeur\":\"");
+	sprintf_P(buffer, "%.1f",senData.temp );
+	response += buffer;
+	response += F("\",\"unite\":\"°C\",\"precedente\":\"");
+	sprintf_P(buffer, "%.1f",senData.ptemp );
+	response += buffer;
+	response += F("\",\"time\":\"");
+	sprintf_P(buffer, "%lu",senData.time);
+	response += buffer;
+	response += F("\",\"min\":\"");
+	sprintf_P(buffer, "%.1f",senData.tmin);
+	response += buffer;
+	response += F("\",\"max\":\"");
+	sprintf_P(buffer, "%.1f",senData.tmax);
+	response += buffer;
+	response += F("\"}");
+	response += F(",\r\n");
+	response += F("{\"mesure\":\"Humidité\",\"valeur\":\"");
+	sprintf_P(buffer, "%.0f",senData.hum );
+	response += buffer;
+	response += F("\",\"unite\":\"%\",\"precedente\":\"");
+	sprintf_P(buffer, "%.0f",senData.phum );
+	response += buffer;
+	response += F("\",\"time\":\"");
+	sprintf_P(buffer, "%lu",senData.time);
+	response += buffer;
+	response += F("\",\"min\":\"");
+	sprintf_P(buffer, "%.0f",senData.hmin);
+	response += buffer;
+	response += F("\",\"max\":\"");
+	sprintf_P(buffer, "%.0f",senData.hmax);
+	response += buffer;
+	
+	response += F("\"}");
+	
+     // Json end
+   response += F("\r\n]");
+   
+  request->send(200, "application/json", response);
+ 
+
+  
+  #endif //MOD_SENSORS
+}
+
+/* ======================================================================
+Function: sensorsJSON
+Purpose : dump all sensors  values in JSON table format for browser
+Input   : linked list pointer on the concerned data
+          true to dump all values, false for only modified ones
+Output  : -
+Comments: -
+====================================================================== */
+void sensorsJSON(AsyncWebServerRequest *request)
+{
+	
+  #ifdef MOD_SENSORS
+    sensors_read();
+	
+	char buffer[32];
+
+	String response = "";
+	   // Json start
+	response += FPSTR(FP_JSON_START);
+	response += F("\"Temperature\":");
+    response += senData.temp;
+	response += FPSTR(",\r\n") ;
+	//sprintf_P(buffer, "%.1f", );
+	//response += buffer;
+	response += F("\"Humidity\":");
+	response += senData.hum;
+	response += FPSTR(",\r\n") ;
+    //response += F("\",\"Humidity\":\"");
+	//sprintf_P(buffer, "%.0f",senData.hum );
+	//response += buffer;
+    response += F("\"Time\":");
+	response += senData.time;
+	//response += F("\",\"Time\":\"");
+	//sprintf_P(buffer, "%lu",senData.time);
+	//response += buffer;
+	//response += F("\"}");
+	
+     // Json end
+   //response += F("\r\n]");
+    response += FPSTR(FP_JSON_END) ;
+   
+    request->send(200, "application/json", response);
+  #else
+    request->send(404, "text/plain", "Sensor not enabled");
+  
+  #endif //MOD_SENSORS
+
+}
+
+
+
+/* ======================================================================
 Function: getSysJSONData
 Purpose : Return JSON string containing system data
 Input   : Response String
@@ -304,6 +423,9 @@ void getSysJSONData(String & response)
   #endif
   #ifdef MOD_ADPS
     response += F("ADPS");
+  #endif
+  #ifdef MOD_SENSORS
+    response += F("SENSORS");
   #endif
   response += "\"},\r\n";
 

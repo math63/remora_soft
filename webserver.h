@@ -37,6 +37,8 @@ void handleFactoryReset(AsyncWebServerRequest *request);
 void handleReset(AsyncWebServerRequest *request);
 void tinfoJSON(AsyncWebServerRequest *request);
 void tinfoJSONTable(AsyncWebServerRequest *request);
+void sensorsJSON(AsyncWebServerRequest *request);
+void sensorsJSONTable(AsyncWebServerRequest *request);
 void sysJSONTable(AsyncWebServerRequest *request);
 void confJSONTable(AsyncWebServerRequest *request);
 void spiffsJSONTable(AsyncWebServerRequest *request);

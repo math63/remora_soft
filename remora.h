@@ -34,6 +34,7 @@
 #define MOD_TELEINFO  /* Teleinfo   */
 //#define MOD_RF_OREGON   /* Reception des sondes orégon */
 #define MOD_ADPS          /* Délestage */
+#define MOD_SENSORS		  /* Sensors */
 
 // Type of OLED
 #define OLED_SH1106
@@ -166,6 +167,7 @@ extern "C" {
   #include "./display.h"
   #include "./i2c.h"
   #include "./rfm.h"
+  #include "./sensors.h"
   #include "./icons.h"
   #include "./fonts.h"
   #include "./pilotes.h"
@@ -253,10 +255,11 @@ extern "C" {
 #endif
 
 // Masque de bits pour le status global de l'application
-#define STATUS_MCP    0x0001 // I/O expander detecté
-#define STATUS_OLED   0x0002 // Oled detecté
-#define STATUS_RFM    0x0004 // RFM69  detecté
-#define STATUS_TINFO  0x0008 // Trame téléinfo detecté
+#define STATUS_MCP     0x0001 // I/O expander detecté
+#define STATUS_OLED    0x0002 // Oled detecté
+#define STATUS_RFM     0x0004 // RFM69  detecté
+#define STATUS_TINFO   0x0008 // Trame téléinfo detecté
+#define STATUS_SENSORS 0x0016 // Trame téléinfo detecté
 
 // Prise en compte de l'heure d'été
 #define DST_ACTIVED 1

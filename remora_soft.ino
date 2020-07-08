@@ -453,7 +453,7 @@ void mysetup()
 
     // On prend le controle de la LED RGB pour faire
     // un heartbeat si Teleinfo ou OLED ou RFM69
-    #if defined (MOD_TELEINFO) || defined (MOD_OLED) || defined (MOD_RF69)
+    #if defined (MOD_TELEINFO) || defined (MOD_OLED) || defined (MOD_RF69) || defined (MOD_SENSORS)
     RGB.control(true);
     RGB.brightness(128);
     // En jaune nous ne sommes pas encore prêt
@@ -687,6 +687,8 @@ void mysetup()
     server.on("/config.json", confJSONTable);
     server.on("/spiffs.json", spiffsJSONTable);
     server.on("/wifiscan.json", wifiScanJSON);
+	  server.on("/sensor",sensorsJSON);
+	  server.on("/sensor.json",sensorsJSONTable);
 
     // handler for the hearbeat
     server.on("/hb.htm", HTTP_GET, [](AsyncWebServerRequest *request) {
@@ -759,6 +761,9 @@ void mysetup()
   #ifdef MOD_ADPS
     Debug("ADPS ");
   #endif
+  #ifdef MOD_SENSORS
+    Debug("SENSORS ");
+  #endif
 
   Debugln();
 
@@ -806,6 +811,13 @@ void mysetup()
       Tick_jeedom.detach();
       Tick_jeedom.attach(config.jeedom.freq, Task_jeedom);
     }
+  #endif
+  
+  #ifdef MOD_SENSORS
+      // Initialisation Module SHT
+    if (sensors_setup()) {
+		status |= STATUS_SENSORS;// Statut SENSORS ajouté
+		}
   #endif
 
   // Led verte durant le test
@@ -913,6 +925,14 @@ void loop()
       rfm_loop();
       _yield();
   #endif
+  
+  #ifdef MOD_SENSORS
+  if (status & STATUS_SENSORS) {
+	  if((timeClient.getEpochTime()-senData.time)>1800)
+		  sensors_read();
+  }
+  #endif
+  
 
   #ifdef MOD_OLED
     if (status & STATUS_OLED) {

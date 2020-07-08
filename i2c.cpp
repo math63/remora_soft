@@ -98,7 +98,9 @@ uint8_t i2c_scan()
           config.oled_type = 1106;
           DebuglnF("1106!");
         }
-      } else if (address==0x29 || address==0x39 || address==0x49)
+      } else if (address>=0x44 && address<=0x45)
+        Debugln("-> SHT30 !");
+		else if (address==0x29 || address==0x39 || address==0x49)
         Debugln("-> TSL2561 !");
       else
         Debugf("-> Unknown device at 0x%02X!\n");
