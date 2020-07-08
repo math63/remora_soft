@@ -28,7 +28,10 @@ OLEDDisplayUi * ui = NULL;    // Display User Interface
   FrameCallback frames[] = {
       drawFrameLogo,
       drawFrameTinfo,
-      drawFrameWifi,
+	  drawFrameWifi,
+      #ifdef MOD_SENSORS
+	  drawFrameSensors,
+	  #endif
       // Frame RF is activated if MOD_RF69 is defined
       #ifdef MOD_RF69
       drawFrameRF
@@ -325,6 +328,42 @@ OLEDDisplayUi * ui = NULL;    // Display User Interface
     display->clear();
     display->drawXbm(x + (128-remora_width)/2, y, remora_width, remora_height, remora_bits);
     //ui->disableIndicator();
+  }
+  
+    /* ======================================================================
+  Function: drawFrameSensors
+  Purpose : Fonction de la température et humidité
+  Input   : Pointeur sur l'instance de l'afficheur
+            Etat de la frame
+            Coordonnées X
+            Coordonnées Y
+  Output  : -
+  Comments: -
+  ====================================================================== */
+    void drawFrameSensors(OLEDDisplay *display, OLEDDisplayUiState* state, int16_t x, int16_t y){
+	  char buff[20] = "";
+	  
+	  display->clear();
+      display->setFont(Roboto_32);
+	  display->setTextAlignment(TEXT_ALIGN_CENTER);
+      sprintf_P(buff, PSTR("%3.1f°C"), senData.temp);
+      display->drawString(x + 64, y + 0, buff);
+	  display->setFont(Roboto_Condensed_Plain_16);
+	  display->setTextAlignment(TEXT_ALIGN_LEFT);
+	  sprintf_P(buff, PSTR("%2.f%%"), senData.hum);
+      display->drawString(x + 84, y + 32, buff);
+	  
+	  
+//	  display->drawXbm(x + (128-thermometer_width)/2, y+10, thermometer_width, thermometer_height, thermometer_bits);
+
+
+	  display->setFont(Roboto_Condensed_12);
+      display->setTextAlignment(TEXT_ALIGN_LEFT);
+      display->drawString(x + 0, 48, timeAgo(timeClient.getEpochTime()-senData.time));
+	  display->setTextAlignment(TEXT_ALIGN_RIGHT);
+	  //changer gethours par getepoch puis hour(getepochtime+isummer*3600)
+      sprintf_P(buff, PSTR("%02d:%02d"),hour(timeClient.getEpochTime()+issummer(timeClient.getEpochTime())*3600),timeClient.getMinutes());
+      display->drawString(x + 128, y + 48, buff);
   }
 
   /* ======================================================================
