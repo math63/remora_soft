@@ -25,8 +25,8 @@
 //#define REMORA_BOARD_V11  // Version 1.1
 //#define REMORA_BOARD_V12  // Version 1.2
 //#define REMORA_BOARD_V13  // Version 1.3
-#define REMORA_BOARD_V14    // Version 1.4
-//#define REMORA_BOARD_V15  // Version 1.5
+//#define REMORA_BOARD_V14    // Version 1.4
+#define REMORA_BOARD_V15  // Version 1.5
 
 //  Définir ici les modules utilisés sur la carte Remora
 //#define MOD_RF69      /* Module RF  */
@@ -41,7 +41,7 @@
 #define OLED_SSD1306
 
 // Version logicielle remora
-#define REMORA_VERSION "1.4.0"
+#define REMORA_VERSION "1.5.0"
 
 // Définir ici votre authentification blynk, cela
 // Activera automatiquement blynk http://blynk.cc
