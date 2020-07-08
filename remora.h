@@ -50,7 +50,7 @@
 #ifdef SPARK
   #include "LibMCP23017.h"
   #include "LibULPNode_RF_Protocol.h"
-  #include "LibLibTeleinfo.h"
+  #include "LibTeleinfo.h"
   //#include "WebServer.h"
 
   #include "display.h"
@@ -153,7 +153,7 @@ extern "C" {
   //#include "./RFM69registers.h"
   //#include "./RFM69.h"
   #include "./LibULPNode_RF_Protocol.h"
-  #include "./LibLibTeleinfo.h"
+  #include "./LibTeleinfo.h"
   #include "./LibRadioHead.h"
   #include "./LibRHReliableDatagram.h"
 

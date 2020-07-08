@@ -25,7 +25,7 @@
 #ifdef SPARK
   #include "LibMCP23017.h"
   #include "LibULPNode_RF_Protocol.h"
-  #include "LibLibTeleinfo.h"
+  #include "LibTeleinfo.h"
   //#include "WebServer.h"
   #include "display.h"
   #include "i2c.h"
@@ -67,7 +67,7 @@
   #include <BlynkSimpleEsp8266.h>
   #include "./LibMCP23017.h"
   #include "./LibULPNode_RF_Protocol.h"
-  #include "./LibLibTeleinfo.h"
+  #include "./LibTeleinfo.h"
   #include "./LibRadioHead.h"
   #include "./LibRHReliableDatagram.h"
 #endif

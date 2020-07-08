@@ -67,11 +67,10 @@
   #define TI_Debugflush  
 #endif
 
-#ifdef ESP8266
+#if defined (ESP8266) || defined (ESP32)
   // For 4 bytes Aligment boundaries
-  #define ESP8266_allocAlign(size)  ((size + 3) & ~((size_t) 3))
+  #define ESP_allocAlign(size)  ((size + 3) & ~((size_t) 3))
 #endif
-
 
 #pragma pack(push)  // push current alignment to stack
 #pragma pack(1)     // set alignment to 1 byte boundary
@@ -81,10 +80,10 @@ typedef struct _ValueList ValueList;
 struct _ValueList 
 {
   ValueList *next; // next element
-  uint8_t checksum;// checksum
-  uint8_t flags;   // specific flags
   char  * name;    // LABEL of value name
   char  * value;   // value 
+  uint8_t checksum;// checksum
+  uint8_t flags;   // specific flags
 };
 
 #pragma pack(pop)
@@ -119,7 +118,7 @@ class TInfo
 {
   public:
     TInfo();
-    void         init();
+    void          init();
     _State_e      process (char c);
     void          attachADPS(void (*_fn_ADPS)(uint8_t phase));  
     void          attachData(void (*_fn_data)(ValueList * valueslist, uint8_t state));  
@@ -130,10 +129,10 @@ class TInfo
     uint8_t       valuesDump(void);
     char *        valueGet(char * name, char * value);
     boolean       listDelete();
-    unsigned char calcChecksum(char *etiquette, char *valeur);
+    unsigned char calcChecksum(char *etiquette, char *valeur) ;
 
   private:
-    uint8_t       clearBuffer();
+    void          clearBuffer();
     ValueList *   valueAdd (char * name, char * value, uint8_t checksum, uint8_t * flags);
     boolean       valueRemove (char * name);
     boolean       valueRemoveFlagged(uint8_t flags);
