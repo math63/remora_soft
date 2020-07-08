@@ -11,6 +11,7 @@
 +function ($) {
   var Timer_sys,
       Timer_tinfo,
+	  Timer_sensor,
       elapsed = 0,
       ledBrightSlider,
       debug = false;
@@ -231,6 +232,7 @@
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
       clearTimeout(Timer_sys);
       clearTimeout(Timer_tinfo);
+	  clearTimeout(Timer_sensor);
       var target = $(e.target).attr("href")
       if (debug) console.log('activated ' + target);
 
@@ -344,7 +346,9 @@
             }
           });
         });
-      }
+      } else if (target == '#tab_sensor') {
+	  $('#tab_sensor_data').bootstrapTable('refresh',{silent:true, url:'/sensor.json'});
+	  }
     });
 
     $('#tab_tinfo_data')
@@ -363,6 +367,11 @@
       if (debug) console.log('#tab_sys_data loaded');
       if ($('.nav-tabs .active > a').attr('href')=='#tab_sys')
       Timer_sys=setTimeout(function(){$('#tab_sys_data').bootstrapTable('refresh',{silent: true})},1000);
+    })
+	 $('#tab_sensor_data').on('load-success.bs.table', function (e, data) {
+      if (debug) console.log('#tab_sensor_data loaded');
+      if ($('.nav-tabs .active > a').attr('href')=='#tab_sensor')
+      Timer_sensor=setTimeout(function(){$('#tab_sensor_data').bootstrapTable('refresh',{silent:true})},30000);
     })
     $('#tab_fs_data')
       .on('load-success.bs.table', function (e, data) {

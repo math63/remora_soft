@@ -15,6 +15,7 @@
         <li><a href="#tab_cfg" data-toggle="tab"><span class="glyphicon glyphicon-wrench">&nbsp;</span>Configuration</a></li>
         <li><a href="#tab_fs" data-toggle="tab"><span class="glyphicon glyphicon-folder-open">&nbsp;</span>Fichiers&nbsp;<span class="badge" id="sspiffs"></span></a></li>
         <li><a href="#tab_fp" data-toggle="tab"><span class="glyphicon glyphicon-tasks">&nbsp;</span>Zones</a></li>
+		<li><a href="#tab_sensor" data-toggle="tab"><span class="glyphicon glyphicon-tint">&nbsp;</span>Capteurs&nbsp;</a></li>
       </ul>
 
       <!-- Contenu des onglets -->
@@ -527,6 +528,47 @@
             </div>
           </div>
         </div> <!-- tab fp -->
+		
+		<!-- tab sensors -->
+		<div class="tab-pane fade" id="tab_sensor">
+		    <h4>Capteurs</h4>
+			<div class="panel-group" id="pan_SHT30">
+				<div class="panel panel-info">
+							<div class="panel-heading clearfix">
+								<h3 class="panel-title clickable" data-toggle="collapse" id="panhead_SHT30" data-parent="#tab_sensor" data-target="#col_SHT30">
+									Capteur interne (SHT30)&nbsp;&nbsp;&nbsp;
+									&nbsp;&nbsp;&nbsp;
+									Température <span id="sp_SHT30_temp" class="label label-pill label-success badge">-</span>&nbsp;&nbsp;&nbsp;
+									Humidité <span id="sp_SHT30_hum" class="label label-pill label-info badge">-</span>&nbsp;&nbsp;&nbsp;
+									<span class="pull-right glyphicon glyphicon-chevron-down"></span>
+								</h3>
+							</div>
+					<div class="panel-collapse collapse out" id="col_SHT30">
+						<table  data-toggle="table"
+						class="table table-striped table-condensed"
+						data-show-refresh="true"
+						data-show-toggle="true"
+						data-search="true"
+						id="tab_sensor_data"
+						data-select-item-name="toolbar2">
+					<thead>
+					<tr>
+						<th data-field="mesure" data-align="left" data-sortable="true" data-formatter="labelFormatterSensor">Mesure</th>
+						<th data-field="valeur" data-align="left" data-sortable="true" data-formatter="valueFormatterSensor">Valeur</th>
+						<th data-field="precedente" data-align="left" data-sortable="true" data-formatter="vpFormatterSensor">Valeur Pr&eacute;c&eacute;dente</th>	
+						<th data-field="time" data-align="left" data-sortable="true" >Heure</th>	
+						<th data-field="min" data-align="left" data-sortable="true" data-formatter="vpFormatterSensor">Min</th>
+						<th data-field="max" data-align="left" data-sortable="true" data-formatter="vpFormatterSensor">Max</th>
+						
+					</tr>
+					</thead>
+          </table>
+					</div>
+				</div>
+			</div>
+		</div> <!-- tab sensors -->	 
+		
+		
       </div> <!-- tab content-->
 
       <!-- Modal Confirm -->
@@ -668,6 +710,40 @@
       function fileFormatter(value, row) {
         return '<a href="' + row.na + '">' + row.na + '</a>';
       }
+	  
+	  function labelFormatterSensor(value, row){
+
+        var label = "";
+        if ( value === "Température" ) {
+          label = value;
+          $("#sp_SHT30_temp").html(row.valeur + row.unite);
+        } else if ( value === "Humidité" ) {
+          label = value;
+          $("#sp_SHT30_hum").html(row.valeur + row.unite);
+        } 
+		else {
+          label = value;
+        } 
+        return label;
+      }
+	  
+      function valueFormatterSensor(value, row){
+        var label = "";
+        if ( row.valeur > row.precedente ) {
+          label = value + row.unite + "<span class='glyphicon glyphicon-chevron-up pull-right'></span>";
+        } else { 
+          label = value + row.unite + "<span class='glyphicon glyphicon-chevron-down pull-right'></span>";
+        }
+        return label;
+      }
+	  
+      function vpFormatterSensor(value, row){
+        var label = "";
+
+          label = value + row.unite
+
+        return label;
+      } 
 
       function RSSIFormatter(value, row) {
         var rssi = parseInt(row.rssi),
