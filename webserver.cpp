@@ -983,7 +983,7 @@ void handle_fw_upload(AsyncWebServerRequest *request, String filename, size_t in
     int command = U_FLASH;
     //Debugf("Magic Byte: %02X\n", data[0]);
     if (data[0] != 0xE9) {
-      command = U_SPIFFS;
+      command = U_FS;
       SPIFFS.end();
       //DebuglnF("Command U_SPIFFS");
     }

@@ -302,8 +302,6 @@ extern unsigned long Time_ini;
 #endif
 
 
-extern uint16_t status; // status global de l'application
-
 // Function exported for other source file
 // =======================================
 char * timeAgo(unsigned long);

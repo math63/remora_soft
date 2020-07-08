@@ -580,7 +580,7 @@ void mysetup()
 
     // OTA callbacks
     ArduinoOTA.onStart([]() {
-      if (ArduinoOTA.getCommand() == U_SPIFFS) {
+      if (ArduinoOTA.getCommand() == U_FS) {
         SPIFFS.end(); // Arret du SPIFFS, sinon plantage de la mise à jour
       }
       LedRGBON(COLOR_MAGENTA);
@@ -916,18 +916,21 @@ void loop()
 
   #ifdef MOD_OLED
     if (status & STATUS_OLED) {
-      int remainingTimeBudget = ui->update();
-      if (remainingTimeBudget > 0) {
+      //int remainingTimeBudget = 
+	  ui->update();
+ /*
+ if (remainingTimeBudget > 0) {
         // You can do some work here
         // Don't do stuff if you are below your
         // time budget.
         // delay(remainingTimeBudget);
-      }
+      }*/
     }
+
   #endif
 
   // çà c'est fait
-  refreshDisplay = false;
+ // refreshDisplay = false;
 
   #if defined (SPARK)
   // recupération de l'état de connexion au cloud SPARK
