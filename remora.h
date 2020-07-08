@@ -105,6 +105,9 @@
   #include <ESPAsyncTCP.h>
   #include <ESPAsyncWebServer.h>
   #include <WiFiUdp.h>
+  #include <NTPClient.h>
+  #include <Time.h>
+  #include <TimeLib.h>
   #include <Ticker.h>
   #include <NeoPixelBus.h>
   #include <ArduinoOTA.h>
@@ -255,13 +258,17 @@ extern "C" {
 #define STATUS_RFM    0x0004 // RFM69  detecté
 #define STATUS_TINFO  0x0008 // Trame téléinfo detecté
 
+// Prise en compte de l'heure d'été
+#define DST_ACTIVED 1
+
 // Variables exported to other source file
 // ========================================
 // define var for whole project
 
 // status global de l'application
 extern uint16_t status;
-extern unsigned long uptime;
+//extern unsigned long uptime;
+extern unsigned long Time_ini;
 
 
 #ifdef SPARK
@@ -275,6 +282,7 @@ extern unsigned long uptime;
 
   // ESP8266 WebServer
   extern AsyncWebServer server;
+  extern NTPClient timeClient;
     // RGB LED
   //extern NeoPixelBus rgb_led;
   //extern NeoPixelBus rgb_led(1, RGB_LED_PIN);
@@ -301,5 +309,7 @@ extern uint16_t status; // status global de l'application
 char * timeAgo(unsigned long);
 void Task_emoncms();
 void Task_jeedom();
+bool issummer(unsigned long sec);
+unsigned long uptime();
 
 #endif

@@ -125,7 +125,7 @@ unsigned long rfm_receive_data(void)
       }
     }
     // Prepare our last seen value
-    node_last_seen = uptime;
+    node_last_seen = uptime();
 
     ll_Add(&nodes_list, rfData.groupid, rfData.nodeid, rfData.rssi, &node_last_seen);
     //ll_Dump(&nodes_list, g_second);
@@ -201,7 +201,7 @@ void rfm_loop(void)
   // Data received from driver ?
   if (driver.available()) {
     node_last_seen = rfm_receive_data();
-    packet_last_seen = uptime;
+    packet_last_seen = uptime();
     packetReceived = true;
     got_first = true;
   }
@@ -210,13 +210,13 @@ void rfm_loop(void)
   if (packetReceived) {
     // command code
     uint8_t cmd = rfData.buffer[0];
-    unsigned long seen = uptime-node_last_seen;
+    unsigned long seen = uptime()-node_last_seen;
 
     #define DEBUG_VERBOSE
     #ifdef DEBUG_VERBOSE
       // Dump Raw packet
       DebugF("# (");
-      Debug(uptime);
+      Debug(uptime());
       DebugF(")");
 
       if (rfData.flags & RF_PAYLOAD_REQ_ACK)

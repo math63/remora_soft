@@ -50,6 +50,9 @@
   #include <ESPAsyncTCP.h>
   #include <ESPAsyncWebServer.h>
   #include <WiFiUdp.h>
+  #include <NTPClient.h>
+  #include <Time.h>
+  #include <TimeLib.h>
   #include <ArduinoOTA.h>
   #include <Wire.h>
   #include <SPI.h>
@@ -77,7 +80,8 @@
 // ==================
 // status global de l'application
 uint16_t status = 0;
-unsigned long uptime = 0;
+//unsigned long uptime = 0;
+unsigned long Time_ini=0;
 bool first_setup;
 bool got_first = false;
 
@@ -94,6 +98,8 @@ int my_cloud_disconnect = 0;
   AsyncWebServer server(80);
   // Use WiFiClient class to create a connection to WEB server
   WiFiClient client;
+  WiFiUDP ntpUDP;
+  NTPClient timeClient(ntpUDP, "europe.pool.ntp.org", 3600, 1800000);
   // RGB LED (1 LED)
   MyPixelBus rgb_led(1, RGB_LED_PIN);
 
@@ -358,6 +364,46 @@ char * timeAgo(unsigned long sec)
   return buff;
 }
 
+/* ======================================================================
+Function: issummer
+Purpose : Daylight Saving Time flag. 0: winter 1: summer (for EUR purpose)
+Input   : second
+Output  : bool
+Comments: -
+====================================================================== */
+bool issummer(unsigned long sec)
+{
+	// =25+MOD(7002-(annee)-ENT(annee/4);7)
+	// 25+(7005-(annee)-ENT((annee)/4))%7;
+ 
+// input parameters: "normal time" for year, month, day, hour, weekday and tzHours (0=UTC, 1=MEZ)
+
+    if (DST_ACTIVED == 1) {
+        if ((month(sec) < 3) || (month(sec) > 10)) return false; // keine Sommerzeit in Jan, Feb, Nov, Dez
+        if ((month(sec) > 3) && (month(sec) < 10)) return true; // Sommerzeit in Apr, Mai, Jun, Jul, Aug, Sep
+        if ((month(sec) == 3 && ((hour(sec) + 24 * day(sec)) >= (1 + hour(sec) + 24 * (25 + (7002 - year(sec) - year(sec)/4 ) % 7)))) || ((month(sec) == 10 && (hour(sec) + 24 * day(sec)) < (1 + hour(sec) + 24 * (25 - (7005 - year(sec) - year(sec) / 4 ) % 7)))))
+            return true;
+        else
+            return false;
+    }
+   return false;
+}
+
+/* ======================================================================
+Function: issummer
+Purpose : Daylight Saving Time flag. 0: winter 1: summer (for EUR purpose)
+Input   : second
+Output  : bool
+Comments: -
+====================================================================== */
+unsigned long uptime()
+{
+unsigned long _upt=timeClient.getEpochTime()-Time_ini;
+
+return _upt;
+}
+
+
 
 /* ======================================================================
 Function: setup
@@ -525,6 +571,12 @@ void mysetup()
 
     // Connection au Wifi ou Vérification
     WifiHandleConn(true);
+	
+	// Lancement du server NTPClient
+	timeClient.begin();
+	timeClient.update();
+	Time_ini=timeClient.getEpochTime();
+	
 
     // OTA callbacks
     ArduinoOTA.onStart([]() {
@@ -621,7 +673,7 @@ void mysetup()
       String response = "";
       response += FPSTR("{\r\n");
       response += F("\"uptime\":");
-      response += uptime;
+      response += uptime();
       response += FPSTR("\r\n}\r\n") ;
       request->send(200, "text/json", response);
     });
@@ -808,8 +860,10 @@ void loop()
 {
   static bool refreshDisplay = false;
   static bool lastcloudstate;
+    #ifdef BLYNK_AUTH
   static unsigned long previousMillis = 0;  // last time update
   unsigned long currentMillis = millis();
+    #endif
   bool currentcloudstate ;
 
   // our own setup
@@ -825,27 +879,27 @@ void loop()
     ESP.restart();
   }
   #endif
-
+  
+  #ifdef BLYNK_AUTH
   // Gérer notre compteur de secondes
   if ( millis()-previousMillis > 1000) {
     // Ceci arrive toute les secondes écoulées
     previousMillis = currentMillis;
-    uptime++;
-    refreshDisplay = true ;
-    #ifdef BLYNK_AUTH
+ //   uptime++;
+//    refreshDisplay = true ;
       if ( Blynk.connected() ) {
-        String up    = String(uptime) + "s";
+        String up    = String(uptime()) + "s";
         String papp  = String(mypApp) + "W";
         String iinst = String(myiInst)+ "A";
         Blynk.virtualWrite(V0, up, papp, iinst, mypApp);
         _yield();
       }
-    #endif
   } else {
-    #ifdef BLYNK_AUTH
+
       Blynk.run(); // Initiates Blynk
-    #endif
-  }
+
+  }    
+  #endif
 
   #ifdef MOD_TELEINFO
     // Vérification de la reception d'une 1ere trame téléinfo
@@ -882,7 +936,7 @@ void loop()
   // recupération de l'état de connexion au Wifi
   currentcloudstate = WiFi.status()==WL_CONNECTED ? true:false;
   #endif
-
+  timeClient.update();
   // La connexion cloud vient de chager d'état ?
   if (lastcloudstate != currentcloudstate)
   {

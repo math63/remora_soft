@@ -420,7 +420,7 @@ OLEDDisplayUi * ui = NULL;    // Display User Interface
 
           display->setFont(Roboto_Condensed_12);
           display->setTextAlignment(TEXT_ALIGN_CENTER);
-          display->drawString(x + 64, 48, timeAgo(uptime-packet_last_seen));
+          display->drawString(x + 64, 48, timeAgo(uptime()-packet_last_seen));
         }
       }
     //}

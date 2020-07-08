@@ -267,7 +267,7 @@ void getSysJSONData(String & response)
   response += F("[\r\n");
 
   response += "{\"na\":\"Uptime\",\"va\":\"";
-  response += uptime;
+  response += uptime();
   response += "\"},\r\n";
 
   response += "{\"na\":\"Version Logiciel\",\"va\":\"" REMORA_VERSION "\"},\r\n";
@@ -639,7 +639,7 @@ void tinfoJSON(AsyncWebServerRequest *request)
       // Json start
       response += FPSTR(FP_JSON_START);
       response += F("\"_UPTIME\":");
-      response += uptime;
+      response += uptime();
       response += FPSTR(FP_NL) ;
 
       // Loop thru the node
